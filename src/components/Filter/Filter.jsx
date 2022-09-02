@@ -1,16 +1,8 @@
 import { IoIosSearch } from 'react-icons/io';
-import { useDispatch, useSelector } from 'react-redux';
-import { filterContacts } from 'redux/filterSlice';
+import PropTypes from 'prop-types';
 import style from './Filter.module.scss';
 
-const Filter = () => {
-  const filterValue = useSelector(state => state.contacts.filter);
-  const dispatch = useDispatch();
-
-  const onChange = e => {
-    dispatch(filterContacts(e.currentTarget.value));
-  };
-
+const Filter = ({ filter, onChange }) => {
   return (
     <label className={style.label} htmlFor="">
       {<IoIosSearch />} Find contacts by name
@@ -18,10 +10,15 @@ const Filter = () => {
         className={style.input}
         type="text"
         placeholder="find contact"
-        value={filterValue}
+        value={filter}
         onChange={onChange}
       />
     </label>
   );
 };
 export default Filter;
+
+Filter.propTypes = {
+  filter: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+};

@@ -1,15 +1,11 @@
-import { nanoid } from 'nanoid';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { addContacts } from '../../redux/itemsSlice';
 import style from './Form.module.scss';
+import { useCreateContactMutation } from 'redux/contacts/contactSlice';
 
-export default function ContactForm() {
+export default function ContactForm({ contacts }) {
   const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
-
-  const contacts = useSelector(state => state.contacts.items);
-  const dispatch = useDispatch();
+  const [phone, setPhone] = useState('');
+  const [createContact] = useCreateContactMutation();
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -18,11 +14,9 @@ export default function ContactForm() {
       case 'name':
         setName(value);
         break;
-
-      case 'number':
-        setNumber(value);
+      case 'phone':
+        setPhone(value);
         break;
-
       default:
         return;
     }
@@ -31,28 +25,27 @@ export default function ContactForm() {
   const handleSubmit = e => {
     e.preventDefault();
 
-    const contact = {
-      id: nanoid(),
+    const NewContact = {
       name: name,
-      number: number,
+      phone: phone,
     };
 
-    const normalizedName = contact.name.toLowerCase();
+    const normalizedName = NewContact.name.toLowerCase();
     const checkedForName = contacts.find(
       contact => normalizedName === contact.name.toLowerCase()
     );
 
     if (checkedForName) {
-      return alert(`${contact.name} is already in contacts`);
+      return alert(`${NewContact.name} is already in contacts`);
     }
 
-    dispatch(addContacts(contact));
+    createContact(NewContact);
     reset();
   };
 
   const reset = e => {
     setName('');
-    setNumber('');
+    setPhone('');
   };
 
   return (
@@ -71,15 +64,15 @@ export default function ContactForm() {
         />
       </label>
       <label className={style.label}>
-        Number
+        Phone
         <input
           className={style.input}
           type="tel"
-          name="number"
+          name="phone"
           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
           required
-          value={number}
+          value={phone}
           onChange={handleChange}
         />
       </label>
